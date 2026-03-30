@@ -1,5 +1,16 @@
 <template>
   <div class="letter-scene">
+    <FloatingBubbles />
+
+    <div class="deco-layer">
+      <span class="deco star" style="left:8%;top:10%;animation-delay:0s;font-size:16px">✨</span>
+      <span class="deco star" style="left:88%;top:8%;animation-delay:0.8s;font-size:13px">⭐</span>
+      <span class="deco star" style="left:92%;top:60%;animation-delay:1.4s;font-size:15px">✨</span>
+      <span class="deco star" style="left:5%;top:75%;animation-delay:0.5s;font-size:14px">⭐</span>
+      <span class="deco star" style="left:50%;top:92%;animation-delay:1.1s;font-size:13px">✨</span>
+      <span class="deco star" style="left:75%;top:85%;animation-delay:1.8s;font-size:16px">⭐</span>
+    </div>
+
     <div class="letter-paper">
       <p class="recipient">亲爱的 {{ letter.recipient }}，</p>
       <div class="content">
@@ -12,6 +23,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import FloatingBubbles from './FloatingBubbles.vue'
 
 const props = defineProps({
   letter: {
@@ -36,6 +48,30 @@ const paragraphs = computed(() =>
   justify-content: center;
   background: radial-gradient(ellipse at 40% 60%, #ffe4ec 0%, #fff3e0 40%, #fdf6ec 100%);
   overflow: hidden;
+  position: relative;
+}
+
+.deco-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.deco {
+  position: absolute;
+  user-select: none;
+  line-height: 1;
+}
+
+.star {
+  animation: twinkle 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+  50%       { opacity: 0.2; transform: scale(0.8) rotate(20deg); }
 }
 
 .letter-paper {
@@ -50,6 +86,8 @@ const paragraphs = computed(() =>
   flex-direction: column;
   gap: 24px;
   animation: unfold 0.5s ease;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes unfold {

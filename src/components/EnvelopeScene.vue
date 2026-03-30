@@ -1,17 +1,14 @@
 <template>
   <div class="envelope-scene">
-    <div class="scene-bg">
-      <!-- 背景装饰占位，后期填充 -->
-    </div>
+    <!-- 动态背景气泡 -->
+    <FloatingBubbles />
+    <!-- 彩带（点击时触发） -->
+    <Confetti ref="confetti" />
 
     <div class="envelope-wrapper" @click="startOpen">
-      <!-- 信封主体 -->
       <div class="envelope" :class="{ opening: animationPhase !== 'idle' }">
-        <!-- 信封盖子 -->
         <div class="envelope-flap" :class="{ open: animationPhase === 'opening' || animationPhase === 'extracting' || animationPhase === 'done' }"></div>
-        <!-- 信封正面 -->
         <div class="envelope-body"></div>
-        <!-- 信纸 -->
         <div class="letter-paper" :class="{ extracting: animationPhase === 'extracting' || animationPhase === 'done' }">
           <div class="letter-lines">
             <div class="line" v-for="i in 5" :key="i"></div>
@@ -26,22 +23,25 @@
 
 <script setup>
 import { ref } from 'vue'
+import FloatingBubbles from './FloatingBubbles.vue'
+import Confetti from './Confetti.vue'
 
 const emit = defineEmits(['open-complete'])
 const animationPhase = ref('idle')
+const confetti = ref(null)
 
-function startOpen() {
+function startOpen(e) {
   if (animationPhase.value !== 'idle') return
 
-  // 阶段1：盖子翻开
+  // 触发彩带爆发
+  confetti.value.burst(e.clientX, e.clientY)
+
   animationPhase.value = 'opening'
 
   setTimeout(() => {
-    // 阶段2：信纸抽出
     animationPhase.value = 'extracting'
 
     setTimeout(() => {
-      // 阶段3：完成，通知父组件
       animationPhase.value = 'done'
       setTimeout(() => emit('open-complete'), 400)
     }, 800)
@@ -56,14 +56,9 @@ function startOpen() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fdf6ec;
+  background: radial-gradient(ellipse at 60% 40%, #ffe4ec 0%, #fff3e0 40%, #fdf6ec 100%);
   position: relative;
-}
-
-.scene-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  overflow: hidden;
 }
 
 .envelope-wrapper {
@@ -73,6 +68,8 @@ function startOpen() {
   gap: 24px;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  z-index: 1;
 }
 
 .envelope {
@@ -80,15 +77,21 @@ function startOpen() {
   width: 360px;
   height: 240px;
   perspective: 800px;
+  filter: drop-shadow(0 12px 40px rgba(200, 120, 80, 0.18));
+  transition: transform 0.2s ease;
+}
+
+.envelope:hover {
+  transform: translateY(-4px) scale(1.02);
 }
 
 .envelope-body {
   position: absolute;
   inset: 0;
-  background: #f5e6c8;
-  border-radius: 4px;
+  background: linear-gradient(145deg, #f9e8c8, #f0d4a0);
+  border-radius: 6px;
   border: 1px solid #d4b896;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
 }
 
 .envelope-flap {
@@ -97,10 +100,10 @@ function startOpen() {
   left: 0;
   width: 100%;
   height: 50%;
-  background: #edd9a3;
+  background: linear-gradient(160deg, #f5dfa0, #e8c878);
   border: 1px solid #d4b896;
   border-bottom: none;
-  border-radius: 4px 4px 0 0;
+  border-radius: 6px 6px 0 0;
   transform-origin: top center;
   transform: rotateX(0deg);
   transition: transform 0.6s ease;
@@ -117,9 +120,9 @@ function startOpen() {
   left: 10%;
   width: 80%;
   height: 85%;
-  background: #fffdf7;
+  background: linear-gradient(180deg, #fffdf7, #fff8ee);
   border: 1px solid #e8d5b0;
-  border-radius: 2px;
+  border-radius: 3px;
   bottom: 8px;
   z-index: 1;
   transform: translateY(0);
@@ -128,30 +131,30 @@ function startOpen() {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   padding: 16px;
 }
 
 .letter-paper.extracting {
-  transform: translateY(-120px);
+  transform: translateY(-130px);
 }
 
 .line {
-  width: 80%;
+  width: 75%;
   height: 2px;
-  background: #d4c4a0;
+  background: linear-gradient(90deg, transparent, #d4c4a0, transparent);
   border-radius: 1px;
 }
 
 .hint {
-  color: #a08060;
+  color: #b08860;
   font-size: 14px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.5; transform: translateY(3px); }
 }
 </style>

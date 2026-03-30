@@ -34,7 +34,8 @@ const paragraphs = computed(() =>
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fdf6ec;
+  background: radial-gradient(ellipse at 40% 60%, #ffe4ec 0%, #fff3e0 40%, #fdf6ec 100%);
+  overflow: hidden;
 }
 
 .letter-paper {

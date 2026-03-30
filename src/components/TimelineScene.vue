@@ -31,7 +31,7 @@ defineProps({
   width: 100%;
   height: 100vh;
   overflow-y: auto;
-  background: #fdf6ec;
+  background: radial-gradient(ellipse at 50% 20%, #ffe4ec 0%, #fff3e0 35%, #fdf6ec 100%);
 }
 
 .timeline-wrapper {
